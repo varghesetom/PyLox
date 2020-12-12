@@ -1,0 +1,5 @@
+misc/
+__pycache__
+out
+scanner/__pycache__
+representing_code/__pycache__ 

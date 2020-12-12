@@ -1,0 +1,8 @@
+// False and None are False.
+print False and "bad"; // expect: False
+print None and "bad"; // expect: None
+
+// Everything else is True.
+print True and "ok"; // expect: ok
+print 0 and "ok"; // expect: ok
+print "" and "ok"; // expect: ok

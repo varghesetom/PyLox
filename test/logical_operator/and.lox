@@ -1,0 +1,19 @@
+// Note: These tests implicitly depend on ints being truthy.
+
+// Return the first non-True argument.
+print False and 1; // expect: False
+print True and 1; // expect: 1
+print 1 and 2 and False; // expect: False
+
+// Return the last argument if all are True.
+print 1 and True; // expect: True
+print 1 and 2 and 3; // expect: 3
+
+// Short-circuit at the first False argument.
+var a = "before";
+var b = "before";
+(a = True) and
+    (b = False) and
+    (a = "bad");
+print a; // expect: True
+print b; // expect: False

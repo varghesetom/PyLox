@@ -1,0 +1,6 @@
+// Evaluate the 'else' expression if the condition is False.
+if (True) print "good"; else print "bad"; // expect: good
+if (False) print "bad"; else print "good"; // expect: good
+
+// Allow block body.
+if (False) None; else { print "block"; } // expect: block

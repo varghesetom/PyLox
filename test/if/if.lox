@@ -1,0 +1,10 @@
+// Evaluate the 'then' expression if the condition is True.
+if (True) print "good"; // expect: good
+if (False) print "bad";
+
+// Allow block body.
+if (True) { print "block"; } // expect: block
+
+// Assignment in if condition.
+var a = False;
+if (a = True) print a; // expect: True

@@ -1,0 +1,2 @@
+// [line 2] Error at 'False': Expect variable name.
+var False = "value";
