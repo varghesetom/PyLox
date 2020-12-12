@@ -12,14 +12,14 @@ Written in Python 3.8 for MacOS. The best way to use the program is to write a L
 
 ## Background 
 
-##### SCANNER
+### ***SCANNER*** 
 The responsibility for the Scanner is to perform accurate lexical analysis. The end goal is to scan through our program input, whether it be from REPL or a file,and translate the encountered lexemes into tokens. Lexemes are grouping of characters that together reflect some meaning in a language.
 
 E.g. A common lexeme in many programming languages is "<" which means 'less than'. Lexical analysis detects this character and recognizes this actually can translate to a "<" token which will hold that character info as well as what kind of token (LESS).
 
 Another example of a lexeme would be "for" which means the start of a loop in many languages. This would be wrapped up in a Token class and its type would be a keyword token. A keyword token is when certain words, or "lexemes", hold special meaning and can only mean one meaning in the programming language. Unlike, say, a "Bob" lexeme that can represent a variable that holds an assignment, "for" can never be used for variable assignment. But before we get to that step of figuring out how tokens all work together, lexical analysis first categorizes each lexeme into a token.
 
-##### PARSER
+### ***PARSER*** 
 
 The job of a parser is to translate tokens -> syntax classs. To do this, we need
 1. Grammar - a set of grammar rules to follow--more specifically, a Context-Free grammar. Most popular is
@@ -33,11 +33,11 @@ what "top-down" is somewhat subtle. It means we go down in terms of precedence.
 
 E.g We can recursively solve for an addition problem. We have "+" operator along with 2 operands and an "addition" production rule that needs two operands for addition to take place. Both operands themselves call the "multiplication" production rule. So each operand must continue and call the "unary" production rule to find out if there is a "!=" unary operator or calls the "primary" production rule. This is our final expression rule to check if our operand is a boolean, number, string, parentheses, etc. The reason we went from addition -> multiplication -> unary (really just "!=") -> primary is because in our basic mathematics we generally follow PEMDAS (Parentheses -> Exponents -> Mult/Div -> Add/Sub) so we have to find out if our operands are really themselves multiplication operands (e.g. (2 * 3) + (4 * 6) means both operands are binary multiplication expressions that boil down to 4 number primitives BEFORE we add the products together)
 
-##### INTERPRETER
+### ***INTERPRETER***
 
 To tackle the actual interpretation of our ASTs we use a combination of metaprogramming and the Visitor pattern to go through each expression and statement in order to evaluate their true meaning. We pass in the entire Parser-constructed AST, represented by an array of statements, to the Interpreter which will visit each AST subclass (each "array statement" is a mini syntax tree where the nodes are the various tokens) and utilize "Expr.py" and "Stmt.py" to figure out which visitor method to implement. These two Python files are generated metaprogrammatically from "GenerateAST.py" to save time explicitly writing out each type of Expression and Statement node. For more details on the Visitor implementation, pelase see below. 
 
-##### Start-to-End Example 
+#### Start-to-End Example 
 Let's go through a complete example from start to finish. If we have a simple 1-line program like "print 1+3;", lexical analysis will translate each lexeme into a token. The tokens would be PRINT,  NUMBER (1),  PLUS,  NUMBER (3), SEMICOLON, EOF. Next, during the Parser phase, the Parser will see a PRINT token and determine that it needs to start wrapping up the successive tokens into a meaningful AST. But before it starts to wrap up everything into a Print Statement (Stmt.Print), it first tries to evaluate the expression, 1 + 3. 
 
 This is where we can see how Recursive Descent Parsing shines. It "descends" downwards from the lowest-level precedence expression, an "assignment" expression, past "or" expression, "and" expression, and so on until it reaches the terminating expression, "primary". Here it tries to match the first token, a NUMBER (1), and returns this Expression Literal successfully ("Expr.Literal"). It returns back to the previous function call, which was a "call" expression, but can't match the next token, a PLUS, and so returns the Expression Literal back to the next function call...until finally it reaches the "addition" expression and can match the PLUS token with the conditional. The recursive descent begins again from there to match the next token, NUMBER, and finally wraps it all up in a Binary Expression (Expr.Binary). Note, this Binary Expression itself has subexpressions (an Expr.Literal = 1, Expr.Literal = 3). 
@@ -48,6 +48,6 @@ This AST is passed along to the Interpreter, a Visitor class that first sees a S
 
 For more details, please see the code files especially for the Parser. The functions are written top-down making it easier to see the "descent". 
 
-##### Visitor Pattern
+#### Visitor Pattern
 Every concrete class of Expr and Stmt will have an "accept" method that will take a Visitor (could be either Interpreter.py or ASTPrinter.py. The latter is only used to print out the expressions correctly.). The Visitor will need to have all the "visit" methods to match up with each concrete class (e.g. if Literal calls its accept method, it'll call the passed in visitor as such, "visitor.visit_Literal(self") where the Literal Expr class is again passed as an argument to the visitor as well!). As the visitor calls its specially-designed visit method, it'll call the fields of the concrete Expr class (e.g. keeping with the same Literal example, the ASTPrinter will return
 "str(expr.value)" where "expr" is the Literal).
